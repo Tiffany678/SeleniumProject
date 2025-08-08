@@ -28,7 +28,7 @@ public class SeleniumTest {
     public static void setUp() throws InterruptedException {
         driver = new ChromeDriver();
         driver.get("https://anupdamoda.github.io/AceOnlineShoePortal/index.html");
-        ExtentSparkReporter spark = new ExtentSparkReporter("src/test/resources/reports/ExtentSparkReport.html");
+        ExtentSparkReporter spark = new ExtentSparkReporter("docs/reports/ExtentSparkReport.html");
         extent.attachReporter(spark);
         HomePage.click_hamburger_menu();
         HomePage.click_onlineProducts_link();

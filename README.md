@@ -1,1 +1,1 @@
-# SeleniumTestNGEntentJenkins
+# SeleniumTestNGExtentJenkins

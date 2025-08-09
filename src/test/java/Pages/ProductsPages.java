@@ -34,7 +34,7 @@ public class ProductsPages {
         String actualTitle = driver.findElement(By.xpath(formalShoes_xpath)).getText();
         try {
             Assert.assertEquals(expectedTitle, actualTitle);
-            test.log(Status.PASS, "The First shoe name matches: " + actualTitle);
+            test.log(Status.PASS, "First shoe name matches: " + actualTitle);
           //  test.log(Status.PASS, test.addScreenCaptureFromPath(capture(driver))+"Test passed");
         } catch (AssertionError e) {
             test.log(Status.FAIL, "Assertion failed: Expected [" + expectedTitle + "] but found [" + actualTitle + "]");

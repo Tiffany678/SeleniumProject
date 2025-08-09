@@ -1,0 +1,43 @@
+name: CI - Selenium Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      # Install Google Chrome (needed for Selenium + headless)
+      - name: Install Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable || \
+            (wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+             && sudo apt-get install -y ./google-chrome-stable_current_amd64.deb)
+
+      # Run your TestNG tests
+      - name: Run tests
+        run: mvn -B -DskipTests=false test
+
+      # Collect reports/artifacts (Extent report + screenshots)
+      - name: Upload Extent report
+        uses: actions/upload-artifact@v4
+        with:
+          name: extent-report
+          path: |
+            docs/reports/*.html
+            screenshots/**
+          if-no-files-found: ignore

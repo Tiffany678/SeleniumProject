@@ -1,4 +1,4 @@
-name: CI - Selenium Tests
+name: CI - Selenium Tests + Publish Report
 
 on:
   push:
@@ -8,10 +8,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -20,7 +18,6 @@ jobs:
           java-version: '17'
           cache: maven
 
-      # Install Google Chrome (needed for Selenium + headless)
       - name: Install Chrome
         run: |
           sudo apt-get update
@@ -28,16 +25,24 @@ jobs:
             (wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
              && sudo apt-get install -y ./google-chrome-stable_current_amd64.deb)
 
-      # Run your TestNG tests
       - name: Run tests
-        run: mvn -B -DskipTests=false test
+        run: mvn -B test
 
-      # Collect reports/artifacts (Extent report + screenshots)
-      - name: Upload Extent report
+      - name: Upload Extent report (optional download)
         uses: actions/upload-artifact@v4
         with:
           name: extent-report
-          path: |
-            docs/reports/*.html
-            screenshots/**
-          if-no-files-found: ignore
+          path: docs/reports/*.html
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
